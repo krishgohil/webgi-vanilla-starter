@@ -1,6 +1,7 @@
 body {
   font-family: sans-serif;
-  overflow: hidden;
+  /* overflow: hidden; */
+
 }
 #webgi-canvas {
   width: 100%;

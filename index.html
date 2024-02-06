@@ -5,12 +5,20 @@
 	<title>WebGi starter</title>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="stylesheet" href="/src/styles.css">
+
 </head>
 
 <body>
+	<!-- <input type="range" min="30" max="100" value="30" id="numClonesSlider" oninput="updateNumClones(this.value)">
+<p id="numClonesValue">Number of Clones: 30</p> -->
 	<div id="webgi-canvas-container">
+		
 		<canvas id="webgi-canvas"></canvas>
 	</div>
+
+	
+
 
 	<script src="src/index.ts" type="module"></script>
 </body>

@@ -1,77 +1,59 @@
-import {
-    ViewerApp,
-    AssetManagerPlugin,
-    GBufferPlugin,
-    timeout,
-    ProgressivePlugin,
-    TonemapPlugin,
-    SSRPlugin,
-    SSAOPlugin,
-    DiamondPlugin,
-    FrameFadePlugin,
-    GLTFAnimationPlugin,
-    GroundPlugin,
-    BloomPlugin,
-    TemporalAAPlugin,
-    AnisotropyPlugin,
-    GammaCorrectionPlugin,
+import { IModel, Vector3, ViewerApp, addBasePlugins } from "webgi";
 
-    addBasePlugins,
-    ITexture, TweakpaneUiPlugin, AssetManagerBasicPopupPlugin, CanvasSnipperPlugin,
 
-    IViewerPlugin, FileTransferPlugin,
+// let numClones = 3; // initial number of clones
 
-    // Color, // Import THREE.js internals
-    // Texture, // Import THREE.js internals
-} from "webgi";
-import "./styles.css";
+// window.updateNumClones = function(value) {
+//   numClones = value;
+//   document.getElementById('numClonesValue').innerHTML = "Number of Clones: " + value;
+//   setupViewer(); // call setupViewer again to update the scene
+// }
 
-async function setupViewer(){
 
-    // Initialize the viewer
-    const viewer = new ViewerApp({
-        canvas: document.getElementById('webgi-canvas') as HTMLCanvasElement,
-    })
 
-    // Add plugins individually.
-    // await viewer.addPlugin(GBufferPlugin)
-    // await viewer.addPlugin(new ProgressivePlugin(32))
-    // await viewer.addPlugin(new TonemapPlugin(!viewer.useRgbm))
-    // await viewer.addPlugin(GammaCorrectionPlugin)
-    // await viewer.addPlugin(SSRPlugin)
-    // await viewer.addPlugin(SSAOPlugin)
-    // await viewer.addPlugin(DiamondPlugin)
-    // await viewer.addPlugin(FrameFadePlugin)
-    // await viewer.addPlugin(GLTFAnimationPlugin)
-    // await viewer.addPlugin(GroundPlugin)
-    // await viewer.addPlugin(BloomPlugin)
-    // await viewer.addPlugin(TemporalAAPlugin)
-    // await viewer.addPlugin(AnisotropyPlugin)
-    // and many more...
+async function setupViewer() {
 
-    // or use this to add all main ones at once.
-    await addBasePlugins(viewer) // check the source: https://codepen.io/repalash/pen/JjLxGmy for the list of plugins added.
 
-    // Add a popup(in HTML) with download progress when any asset is downloading.
-    await viewer.addPlugin(AssetManagerBasicPopupPlugin)
+  const viewer = new ViewerApp({
+    canvas: document.getElementById("webgi-canvas") as HTMLCanvasElement,
+  });
 
-    // Required for downloading files from the UI
-    await viewer.addPlugin(FileTransferPlugin)
+  await addBasePlugins(viewer);
 
-    // Add more plugins not available in base, like CanvasSnipperPlugin which has helpers to download an image of the canvas.
-    await viewer.addPlugin(CanvasSnipperPlugin)
+  let chain = await viewer.load(
+    "./assets/13.259.3dm",
+    {
+      addToRoot: false,
+    }
+  );
 
-    // Import and add a GLB file.
-    await viewer.load("./assets/classic-watch.glb")
 
-    // Load an environment map if not set in the glb file
-    // await viewer.setEnvironmentMap("./assets/environment.hdr");
+  // let ring = await viewer.load(
+  //   "./assets/FI-RUND-050.3dm",
+  //   {
+  //     addToRoot: false,
+  //   }
+  // );
 
-    // Add some UI for tweak and testing.
-    const uiPlugin = await viewer.addPlugin(TweakpaneUiPlugin)
-    // Add plugins to the UI to see their settings.
-    uiPlugin.setupPlugins<IViewerPlugin>(TonemapPlugin, CanvasSnipperPlugin)
 
+
+  let cubes = [];
+  let numClones = 3; // number of clones
+  let distanceBetween = 13; // distance between each clone
+
+
+  for (let i = 0; i < numClones; i++) {
+    let chain_unit = (chain as IModel).modelObject.clone();
+
+    chain_unit.position.x = i * distanceBetween;
+
+    cubes.push(chain_unit);
+    viewer.scene.modelRoot.add(chain_unit);
+  }
+
+  await viewer.setEnvironmentMap(
+    "https://dist.pixotronics.com/webgi/assets/hdr/gem_2.hdr"
+  );
 }
 
-setupViewer()
+setupViewer();
